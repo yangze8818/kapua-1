@@ -133,8 +133,9 @@ public class KapuaSecurityBrokerFilter extends BrokerFilter {
     protected JmsConsumerWrapper stealingLinkManagerConsumer;
     protected String brokerId;
 
-    protected static final Map<String, String> CONNECTION_MAP = new ConcurrentHashMap<>();
-    private static final String CONNECTOR_NAME_VM = String.format("vm://%s", BrokerSetting.getInstance().getString(BrokerSettingKey.BROKER_NAME));
+    protected final static Map<String, String> CONNECTION_MAP = new ConcurrentHashMap<>();
+    private final static String CONNECTOR_NAME_VM = String.format("vm://%s", BrokerSetting.getInstance().getString(BrokerSettingKey.BROKER_NAME));
+    private final static String CONNECTOR_NAME_TCP = "tcp";
     private Authenticator authenticator;
 
     private AuthenticationService authenticationService = KapuaLocator.getInstance().getService(AuthenticationService.class);
@@ -336,7 +337,8 @@ public class KapuaSecurityBrokerFilter extends BrokerFilter {
      */
     private boolean isPassThroughConnection(ConnectionContext context) {
         if (context != null) {
-            if (context.getConnector() == null || CONNECTOR_NAME_VM.equals(((TransportConnector) context.getConnector()).getName())) {
+            if (context.getConnector() == null || CONNECTOR_NAME_VM.equals(((TransportConnector) context.getConnector()).getName())
+                    || CONNECTOR_NAME_TCP.equals(((TransportConnector) context.getConnector()).getName())) {
                 return true;
             }
 
