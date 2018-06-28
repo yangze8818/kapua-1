@@ -118,7 +118,7 @@ public class ServiceDAO {
         try {
             locator = KapuaLocator.getInstance();
         } catch (ExceptionInInitializerError kre) {
-            LOG.warn("KapuaLocator not available! Access Group featue may be not suppoted!", kre);
+            LOG.warn("KapuaLocator not available! Access Group feature may be not supported!", kre);
         }
 
         if (locator != null) {
@@ -140,7 +140,6 @@ public class ServiceDAO {
             ROLE_SERVICE = null;
             ROLE_PERMISSION_SERVICE = null;
         }
-
     }
 
     protected ServiceDAO() {
@@ -474,73 +473,89 @@ public class ServiceDAO {
     }
 
     /**
-     * Criteria for query entity utility method
+     * Handles {@link QueryPredicate} contained of a {@link KapuaQuery}.
+     * <p>
+     * It manages different types of {@link QueryPredicate} like:
+     * <ul>
+     * <li>{@link AttributePredicate}</li>
+     * <li>{@link AndPredicate}</li>
+     * <li>{@link OrPredicate}</li>
+     * </ol>
+     * <p>
+     * It can be invoked recursively (i.e. to handle {@link AttributePredicate}s of the {@link AndPredicate}.
      *
-     * @param qp
-     * @param binds
-     * @param cb
-     * @param userPermissionRoot
-     * @param entityType
-     * @return
-     * @throws KapuaException
+     * @param queryPredicate     The {@link QueryPredicate} to handle.
+     * @param binds              The {@link Map}&lg;{@link String}, {@link Object}&gt; of the query values.
+     * @param cb                 The JPA {@link CriteriaBuilder} of the {@link javax.persistence.Query}.
+     * @param userPermissionRoot The JPA {@link Root} of the {@link javax.persistence.Query}.
+     * @param entityType         The JPA {@link EntityType} of the {@link javax.persistence.Query}.
+     * @return The handled {@link Predicate}
+     * @throws KapuaException If any problem occurs.
      */
-    protected static <E> Expression<Boolean> handleKapuaQueryPredicates(QueryPredicate qp,
+    private static <E> Predicate handleKapuaQueryPredicates(QueryPredicate queryPredicate,
             Map<ParameterExpression, Object> binds,
             CriteriaBuilder cb,
             Root<E> userPermissionRoot,
             EntityType<E> entityType)
             throws KapuaException {
-        Expression<Boolean> expr = null;
-        if (qp instanceof AttributePredicate) {
-            AttributePredicate attrPred = (AttributePredicate) qp;
-            expr = handleAttributePredicate(attrPred, binds, cb, userPermissionRoot, entityType);
-        } else if (qp instanceof AndPredicate) {
-            AndPredicate andPredicate = (AndPredicate) qp;
-            expr = handleAndPredicate(andPredicate, binds, cb, userPermissionRoot, entityType);
-        } else if (qp instanceof OrPredicate) {
-            OrPredicate orPredicate = (OrPredicate) qp;
-            expr = handleOrPredicate(orPredicate, binds, cb, userPermissionRoot, entityType);
+        Predicate predicate = null;
+        if (queryPredicate instanceof AttributePredicate) {
+            AttributePredicate attributePredicate = (AttributePredicate) queryPredicate;
+            predicate = handleAttributePredicate(attributePredicate, binds, cb, userPermissionRoot, entityType);
+        } else if (queryPredicate instanceof AndPredicate) {
+            AndPredicate andPredicate = (AndPredicate) queryPredicate;
+            predicate = handleAndPredicate(andPredicate, binds, cb, userPermissionRoot, entityType);
+        } else if (queryPredicate instanceof OrPredicate) {
+            OrPredicate orPredicate = (OrPredicate) queryPredicate;
+            predicate = handleOrPredicate(orPredicate, binds, cb, userPermissionRoot, entityType);
         }
-        return expr;
+        return predicate;
     }
 
-    private static <E> Expression<Boolean> handleAndPredicate(AndPredicate andPredicate,
+    private static <E> Predicate handleAndPredicate(AndPredicate andPredicate,
             Map<ParameterExpression, Object> binds,
             CriteriaBuilder cb,
             Root<E> entityRoot,
             EntityType<E> entityType)
             throws KapuaException {
-        List<Expression<Boolean>> expressions = new ArrayList<>();
 
-        for (QueryPredicate queryPredicate : andPredicate.getPredicates()) {
-            Expression<Boolean> expr = handleKapuaQueryPredicates(queryPredicate, binds, cb, entityRoot, entityType);
-            expressions.add(expr);
+        List<QueryPredicate> andPredicates = andPredicate.getPredicates();
+        Predicate[] jpaAndPredicates = new Predicate[andPredicates.size()];
+
+        for (int i = 0; i < andPredicates.size(); i++) {
+            Predicate expr = handleKapuaQueryPredicates(andPredicates.get(i), binds, cb, entityRoot, entityType);
+            jpaAndPredicates[i] = expr;
         }
 
-        return cb.and(expressions.toArray(new Predicate[] {}));
+        return cb.and(jpaAndPredicates);
+
     }
 
-    private static <E> Expression<Boolean> handleOrPredicate(OrPredicate orPredicate,
+    private static <E> Predicate handleOrPredicate(OrPredicate orPredicate,
             Map<ParameterExpression, Object> binds,
             CriteriaBuilder cb,
             Root<E> entityRoot,
             EntityType<E> entityType)
             throws KapuaException {
-        List<Expression<Boolean>> exprs = new ArrayList<>();
-        for (QueryPredicate pred : orPredicate.getPredicates()) {
-            Expression<Boolean> expr = handleKapuaQueryPredicates(pred, binds, cb, entityRoot, entityType);
-            exprs.add(expr);
+
+        List<QueryPredicate> orPredicates = orPredicate.getPredicates();
+        Predicate[] jpaOrPredicates = new Predicate[orPredicates.size()];
+
+        for (int i = 0; i < orPredicates.size(); i++) {
+            Predicate expr = handleKapuaQueryPredicates(orPredicates.get(i), binds, cb, entityRoot, entityType);
+            jpaOrPredicates[i] = expr;
         }
-        return cb.or(exprs.toArray(new Predicate[] {}));
+
+        return cb.or(jpaOrPredicates);
     }
 
-    private static <E> Expression<Boolean> handleAttributePredicate(AttributePredicate attrPred,
+    private static <E> Predicate handleAttributePredicate(AttributePredicate attrPred,
             Map<ParameterExpression, Object> binds,
             CriteriaBuilder cb,
             Root<E> entityRoot,
             EntityType<E> entityType)
             throws KapuaException {
-        Expression<Boolean> expr;
+        Predicate expr;
         String attrName = attrPred.getAttributeName();
 
         // Parse attributes
@@ -580,14 +595,14 @@ public class ServiceDAO {
                 strAttrValue = attrValue.toString().replace(LIKE, ESCAPE + LIKE).replace(ANY, ESCAPE + ANY);
                 ParameterExpression<String> pl = cb.parameter(String.class);
                 binds.put(pl, LIKE + strAttrValue + LIKE);
-                expr = cb.like((Expression<String>) extractAttribute(entityRoot, attrName), pl);
+                expr = cb.like(extractAttribute(entityRoot, attrName), pl);
                 break;
 
             case STARTS_WITH:
                 strAttrValue = attrValue.toString().replace(LIKE, ESCAPE + LIKE).replace(ANY, ESCAPE + ANY);
                 ParameterExpression<String> psw = cb.parameter(String.class);
                 binds.put(psw, strAttrValue + LIKE);
-                expr = cb.like((Expression<String>) extractAttribute(entityRoot, attrName), psw);
+                expr = cb.like(extractAttribute(entityRoot, attrName), psw);
                 break;
 
             case IS_NULL:
@@ -757,7 +772,7 @@ public class ServiceDAO {
                 }
             }
         } else {
-            LOG.warn("Access Group is disabled");
+            LOG.warn("Access Group permission feature is disabled");
         }
     }
 }
