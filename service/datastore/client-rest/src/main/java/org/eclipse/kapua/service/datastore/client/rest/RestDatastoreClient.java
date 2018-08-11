@@ -38,8 +38,8 @@ import org.eclipse.kapua.service.datastore.client.QueryConverter;
 import org.eclipse.kapua.service.datastore.client.SchemaKeys;
 import org.eclipse.kapua.service.datastore.client.model.BulkUpdateRequest;
 import org.eclipse.kapua.service.datastore.client.model.BulkUpdateResponse;
-import org.eclipse.kapua.service.datastore.client.model.CheckResponse;
-import org.eclipse.kapua.service.datastore.client.model.CheckResponse.ESHealthStatus;
+import org.eclipse.kapua.service.datastore.client.model.MessageStoreCheckResponse;
+import org.eclipse.kapua.service.datastore.client.model.MessageStoreCheckResponse.ESHealthStatus;
 import org.eclipse.kapua.service.datastore.client.model.IndexRequest;
 import org.eclipse.kapua.service.datastore.client.model.IndexResponse;
 import org.eclipse.kapua.service.datastore.client.model.InsertRequest;
@@ -614,7 +614,7 @@ public class RestDatastoreClient implements org.eclipse.kapua.service.datastore.
     }
 
     @Override
-    public CheckResponse healthCheck() throws ClientException {
+    public MessageStoreCheckResponse healthCheck() throws ClientException {
         logger.debug("healthCheck run...");
         Response checkResponse = restCallTimeoutHandler(new Callable<Response>() {
 
@@ -632,12 +632,12 @@ public class RestDatastoreClient implements org.eclipse.kapua.service.datastore.
                 try {
                     responseNode = MAPPER.readTree(EntityUtils.toString(checkResponse.getEntity()));
                     String status = responseNode.get("status").asText();
-                    return new CheckResponse(ESHealthStatus.valueOf(status));
+                    return new MessageStoreCheckResponse(ESHealthStatus.valueOf(status.toUpperCase()));
                 } catch (ParseException | IOException e) {
                     logger.warn("Unparsable response: {}", e.getMessage(), e);
                 }
             } else {
-                return new CheckResponse(ESHealthStatus.RED);
+                return new MessageStoreCheckResponse(ESHealthStatus.RED);
             }
         }
         throw new ClientException(ClientErrorCodes.ACTION_ERROR,

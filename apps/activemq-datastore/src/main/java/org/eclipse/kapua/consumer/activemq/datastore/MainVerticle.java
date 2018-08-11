@@ -172,6 +172,8 @@ public class MainVerticle extends AbstractMainVerticle {
                 }
             });
         });
+        logger.info("Starting Datastore Consumer... DONE");
+        vertx.deployVerticle(httpRestServer);
     }
 
     @Override

@@ -29,6 +29,7 @@ import org.eclipse.kapua.message.transport.TransportMessageType;
 import org.eclipse.kapua.processor.Processor;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.service.datastore.MessageStoreAdminService;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ public abstract class DatastoreProcessor implements Processor<TransportMessage>,
 
     private AccountService accountService;
     private MessageStoreService messageStoreService;
+    private MessageStoreAdminService messageStoreAdminService;
 
     public static DatastoreProcessor getProcessorWithNoFilter(Vertx vertx) {
         return new DatastoreProcessor(vertx) {
@@ -68,6 +70,7 @@ public abstract class DatastoreProcessor implements Processor<TransportMessage>,
         accountService = KapuaLocator.getInstance().getService(AccountService.class);
         //calling the get message store service in order to initialize the ES link here
         messageStoreService = KapuaLocator.getInstance().getService(MessageStoreService.class);
+        messageStoreAdminService = KapuaLocator.getInstance().getService(MessageStoreAdminService.class);
         startFuture.complete();
     }
 
@@ -131,14 +134,20 @@ public abstract class DatastoreProcessor implements Processor<TransportMessage>,
 
     @Override
     public Status getStatus() {
-        //TODO check datastore status
-        return Status.OK();
+        try {
+            return messageStoreAdminService.getStatus().isHealthy() ? Status.OK() : Status.KO();
+        } catch (KapuaException kaex) {
+            return Status.KO();
+        }
     }
 
     @Override
     public boolean isHealty() {
-        //TODO check datastore status
-        return true;
+        try {
+            return messageStoreAdminService.getStatus().isHealthy();
+        } catch (KapuaException kaex) {
+            return false;
+        }
     }
 
 }

@@ -139,6 +139,7 @@ public class MainVerticle extends AbstractMainVerticle {
                 }
             });
         });
+        vertx.deployVerticle(httpRestServer);
         logger.info("Starting LoggerProcessor Consumer... DONE");
     }
 

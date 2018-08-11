@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.kapua.service.datastore.client.model.BulkUpdateRequest;
 import org.eclipse.kapua.service.datastore.client.model.BulkUpdateResponse;
-import org.eclipse.kapua.service.datastore.client.model.CheckResponse;
+import org.eclipse.kapua.service.datastore.client.model.MessageStoreCheckResponse;
 import org.eclipse.kapua.service.datastore.client.model.IndexRequest;
 import org.eclipse.kapua.service.datastore.client.model.IndexResponse;
 import org.eclipse.kapua.service.datastore.client.model.InsertRequest;
@@ -133,7 +133,7 @@ public interface DatastoreClient {
      * @return
      * @throws ClientException
      */
-    public CheckResponse healthCheck() throws ClientException;
+    public MessageStoreCheckResponse healthCheck() throws ClientException;
 
     /**
      * Create the index

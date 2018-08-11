@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.client.model;
 
-public class CheckResponse {
+public class MessageStoreCheckResponse {
 
     public enum ESHealthStatus {
         GREEN,
@@ -21,7 +21,7 @@ public class CheckResponse {
 
     private ESHealthStatus status;
 
-    public CheckResponse(ESHealthStatus status) {
+    public MessageStoreCheckResponse(ESHealthStatus status) {
         this.status = status;
     }
 

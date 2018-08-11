@@ -30,10 +30,11 @@ import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.datastore.MessageStoreAdminService;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.client.ClientCommunicationException;
 import org.eclipse.kapua.service.datastore.client.ClientUnavailableException;
-import org.eclipse.kapua.service.datastore.client.model.CheckResponse.ESHealthStatus;
+import org.eclipse.kapua.service.datastore.client.model.MessageStoreCheckResponse;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreCommunicationException;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreException;
@@ -54,7 +55,7 @@ import java.util.UUID;
  * @since 1.0.0
  */
 @KapuaProvider
-public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService implements MessageStoreService {
+public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService implements MessageStoreService, MessageStoreAdminService {
 
     protected static final String METRIC_COMPONENT_NAME = "datastore";
 
@@ -222,9 +223,9 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
     }
 
     @Override
-    public ESHealthStatus getStatus() throws KapuaException {
+    public MessageStoreCheckResponse getStatus() throws KapuaException {
         try {
-            return messageStoreFacade.getStatus();
+            return new MessageStoreCheckResponse(messageStoreFacade.getStatus());
         } catch (Exception e) {
             throw new DatastoreException(KapuaErrorCodes.INTERNAL_ERROR, e);
         }

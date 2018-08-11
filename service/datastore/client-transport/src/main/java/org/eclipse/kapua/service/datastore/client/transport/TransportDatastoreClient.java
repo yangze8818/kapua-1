@@ -27,8 +27,8 @@ import org.eclipse.kapua.service.datastore.client.QueryConverter;
 import org.eclipse.kapua.service.datastore.client.SchemaKeys;
 import org.eclipse.kapua.service.datastore.client.model.BulkUpdateRequest;
 import org.eclipse.kapua.service.datastore.client.model.BulkUpdateResponse;
-import org.eclipse.kapua.service.datastore.client.model.CheckResponse;
-import org.eclipse.kapua.service.datastore.client.model.CheckResponse.ESHealthStatus;
+import org.eclipse.kapua.service.datastore.client.model.MessageStoreCheckResponse;
+import org.eclipse.kapua.service.datastore.client.model.MessageStoreCheckResponse.ESHealthStatus;
 import org.eclipse.kapua.service.datastore.client.model.IndexRequest;
 import org.eclipse.kapua.service.datastore.client.model.IndexResponse;
 import org.eclipse.kapua.service.datastore.client.model.InsertRequest;
@@ -461,20 +461,20 @@ public class TransportDatastoreClient implements org.eclipse.kapua.service.datas
     }
 
     @Override
-    public CheckResponse healthCheck() throws ClientException {
+    public MessageStoreCheckResponse healthCheck() throws ClientException {
         checkClient();
         ClusterHealthRequest chreq = new ClusterHealthRequest();
         ActionFuture<ClusterHealthResponse> response = esClientProvider.getClient().admin().cluster().health(chreq);
         ClusterHealthResponse chresp = response.actionGet();
         chresp.getStatus();
         if (ClusterHealthStatus.GREEN.equals(chresp.getStatus())) {
-            return new CheckResponse(ESHealthStatus.GREEN);
+            return new MessageStoreCheckResponse(ESHealthStatus.GREEN);
         }
         else if (ClusterHealthStatus.YELLOW.equals(chresp.getStatus())) {
-            return new CheckResponse(ESHealthStatus.YELLOW);
+            return new MessageStoreCheckResponse(ESHealthStatus.YELLOW);
         }
         else {
-            return new CheckResponse(ESHealthStatus.RED);
+            return new MessageStoreCheckResponse(ESHealthStatus.RED);
         }
     }
 

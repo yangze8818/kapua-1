@@ -32,7 +32,7 @@ import org.eclipse.kapua.service.datastore.client.model.InsertRequest;
 import org.eclipse.kapua.service.datastore.client.model.InsertResponse;
 import org.eclipse.kapua.service.datastore.client.model.ResultList;
 import org.eclipse.kapua.service.datastore.client.model.TypeDescriptor;
-import org.eclipse.kapua.service.datastore.client.model.CheckResponse.ESHealthStatus;
+import org.eclipse.kapua.service.datastore.client.model.MessageStoreCheckResponse.ESHealthStatus;
 import org.eclipse.kapua.service.datastore.internal.client.DatastoreClientFactory;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreChannel;

@@ -43,6 +43,7 @@
 
         <!-- datastore -->
         <api>org.eclipse.kapua.service.datastore.MessageStoreService</api>
+        <api>org.eclipse.kapua.service.datastore.MessageStoreAdminService</api>
         <api>org.eclipse.kapua.service.datastore.ClientInfoRegistryService</api>
         <api>org.eclipse.kapua.service.datastore.ChannelInfoRegistryService</api>
         <api>org.eclipse.kapua.service.datastore.MetricInfoRegistryService</api>

@@ -185,6 +185,7 @@ public class MainVerticle extends AbstractMainVerticle {
                 future.fail(ar.cause());
             }
         });
+        vertx.deployVerticle(httpRestServer);
         logger.info("Starting Lifecycle Consumer... DONE");
     }
 
