@@ -11,6 +11,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.targets.internal;
 
+import org.eclipse.kapua.commons.model.AbstractKapuaUpdatableEntity;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.job.targets.JobTarget;
+import org.eclipse.kapua.service.job.targets.JobTargetStatus;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
@@ -21,12 +27,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.eclipse.kapua.commons.model.AbstractKapuaUpdatableEntity;
-import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.job.targets.JobTarget;
-import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 
 @Entity(name = "JobTarget")
 @Table(name = "job_job_target")
@@ -53,6 +53,10 @@ public class JobTargetImpl extends AbstractKapuaUpdatableEntity implements JobTa
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, updatable = true)
     private JobTargetStatus status;
+
+    @Basic
+    @Column(name = "status_message", nullable = true, updatable = true)
+    private String statusMessage;
 
     @Transient
     private Exception e;
@@ -102,6 +106,16 @@ public class JobTargetImpl extends AbstractKapuaUpdatableEntity implements JobTa
     @Override
     public void setStatus(JobTargetStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    @Override
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 
     @Override

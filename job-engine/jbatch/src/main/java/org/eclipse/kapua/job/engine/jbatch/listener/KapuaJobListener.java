@@ -64,11 +64,11 @@ public class KapuaJobListener extends AbstractJobListener implements JobListener
     @Inject
     private JobContext jobContext;
 
-    @Override
     /**
      * Before starting the actual {@link org.eclipse.kapua.service.job.Job} processing, create the {@link JobExecution} to track progress and
      * check if there are other {@link JobExecution} running with the same {@link JobExecution#getTargetIds()}.
      */
+    @Override
     public void beforeJob() throws Exception {
         JobContextWrapper jobContextWrapper = new JobContextWrapper(jobContext);
 
@@ -93,10 +93,10 @@ public class KapuaJobListener extends AbstractJobListener implements JobListener
         LOG.info("JOB {} - {} - Running before job... DONE!", jobContextWrapper.getJobId(), jobContextWrapper.getJobName());
     }
 
-    @Override
     /**
      * Close the {@link JobExecution} setting the {@link JobExecution#getEndedOn()}.
      */
+    @Override
     public void afterJob() throws Exception {
         JobContextWrapper jobContextWrapper = new JobContextWrapper(jobContext);
 
