@@ -24,6 +24,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -57,6 +58,10 @@ public class JobExecutionImpl extends AbstractKapuaUpdatableEntity implements Jo
             @AttributeOverride(name = "eid", column = @Column(name = "target_id", nullable = false, updatable = false))
     })
     private Set<KapuaEid> targetIds;
+
+    @Lob
+    @Column(name = "log", nullable = true, updatable = true)
+    private String log;
 
     public JobExecutionImpl() {
     }
@@ -118,5 +123,15 @@ public class JobExecutionImpl extends AbstractKapuaUpdatableEntity implements Jo
         }
 
         return tagIds;
+    }
+
+    @Override
+    public String getLog() {
+        return log;
+    }
+
+    @Override
+    public void setLog(String log) {
+        this.log = log;
     }
 }

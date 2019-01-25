@@ -60,4 +60,8 @@ public interface JobExecution extends KapuaUpdatableEntity {
     <I extends KapuaId> Set<I> getTargetIds();
 
     void setTargetIds(Set<KapuaId> tagTargetIds);
+
+    String getLog();
+
+    void setLog(String log);
 }
