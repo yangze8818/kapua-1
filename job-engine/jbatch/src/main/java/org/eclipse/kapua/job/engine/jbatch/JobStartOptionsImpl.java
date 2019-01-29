@@ -23,6 +23,8 @@ public class JobStartOptionsImpl implements JobStartOptions {
 
     private Integer fromStepIndex;
 
+    private boolean enqueue;
+
     public JobStartOptionsImpl() {
     }
 
@@ -58,5 +60,15 @@ public class JobStartOptionsImpl implements JobStartOptions {
     @Override
     public void setFromStepIndex(Integer fromStepIndex) {
         this.fromStepIndex = fromStepIndex;
+    }
+
+    @Override
+    public boolean getEnqueue() {
+        return enqueue;
+    }
+
+    @Override
+    public void setEnqueue(boolean enqueue) {
+        this.enqueue = enqueue;
     }
 }
