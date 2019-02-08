@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Eurotech and/or its affiliates and others
+ * Copyright (c) 2019 Eurotech and/or its affiliates and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,17 +9,13 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.job.engine.commons.wrappers;
+package org.eclipse.kapua.job.engine.queue;
 
-public interface JobContextPropertyNames {
+import org.eclipse.kapua.model.KapuaUpdatableEntityAttributes;
 
-    String JOB_SCOPE_ID = "job.scopeId";
+public class QueuedJobExecutionAttributes extends KapuaUpdatableEntityAttributes {
 
-    String JOB_ID = "job.id";
+    public static final String JOB_ID = "jobId";
 
-    String JOB_TARGET_SUBLIST = "job.target.sublist";
-
-    String JOB_STEP_FROM_INDEX = "job.step.fromIndex";
-
-    String ENQUEUE = "job.enqueue";
+    public static final String JOB_EXECUTION_ID = "jobExecutionId";
 }

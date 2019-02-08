@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Eurotech and/or its affiliates and others
+ * Copyright (c) 2018, 2019 Eurotech and/or its affiliates and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,12 +20,18 @@ import java.util.Set;
 public class JobStartOptionsImpl implements JobStartOptions {
 
     private Set<KapuaId> targetIdSublist;
-
     private Integer fromStepIndex;
-
     private boolean enqueue;
 
     public JobStartOptionsImpl() {
+    }
+
+    public JobStartOptionsImpl(JobStartOptions jobStartOptions) {
+        this();
+
+        setTargetIdSublist(jobStartOptions.getTargetIdSublist());
+        setFromStepIndex(jobStartOptions.getFromStepIndex());
+        setEnqueue(jobStartOptions.getEnqueue());
     }
 
     @Override
@@ -70,5 +76,9 @@ public class JobStartOptionsImpl implements JobStartOptions {
     @Override
     public void setEnqueue(boolean enqueue) {
         this.enqueue = enqueue;
+    }
+
+    public static JobStartOptionsImpl parse(JobStartOptions jobStartOptions) {
+        return jobStartOptions != null ? (jobStartOptions instanceof JobStartOptionsImpl ? (JobStartOptionsImpl) jobStartOptions : new JobStartOptionsImpl(jobStartOptions)) : null;
     }
 }

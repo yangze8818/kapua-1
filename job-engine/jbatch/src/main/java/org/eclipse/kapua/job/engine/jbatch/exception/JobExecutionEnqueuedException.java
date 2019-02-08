@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Eurotech and/or its affiliates and others
+ * Copyright (c) 2018 Eurotech and/or its affiliates and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,17 +9,13 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.job.engine.commons.wrappers;
+package org.eclipse.kapua.job.engine.jbatch.exception;
 
-public interface JobContextPropertyNames {
+import org.eclipse.kapua.model.id.KapuaId;
 
-    String JOB_SCOPE_ID = "job.scopeId";
+public class JobExecutionEnqueuedException extends JobEngineException {
 
-    String JOB_ID = "job.id";
-
-    String JOB_TARGET_SUBLIST = "job.target.sublist";
-
-    String JOB_STEP_FROM_INDEX = "job.step.fromIndex";
-
-    String ENQUEUE = "job.enqueue";
+    public JobExecutionEnqueuedException(KapuaId scopeId, KapuaId jobId, KapuaId jobExecutionId, KapuaId enqueuedJobId) {
+        super(KapuaJobEngineErrorCodes.JOB_EXECUTION_ENQUEUED, scopeId, jobId, jobExecutionId, enqueuedJobId);
+    }
 }

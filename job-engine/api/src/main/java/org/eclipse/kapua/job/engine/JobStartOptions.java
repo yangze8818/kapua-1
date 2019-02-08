@@ -35,7 +35,7 @@ public interface JobStartOptions extends KapuaSerializable {
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
     Set<KapuaId> getTargetIdSublist();
 
-    void setTargetIdSublist(Set<KapuaId> targetSublist);
+    void setTargetIdSublist(Set<KapuaId> targetIdSublist);
 
     @XmlTransient
     void removeTargetIdToSublist(KapuaId targetId);
