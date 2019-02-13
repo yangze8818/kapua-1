@@ -19,7 +19,11 @@ public interface JobContextPropertyNames {
 
     String JOB_TARGET_SUBLIST = "job.target.sublist";
 
+    String RESUMED_KAPUA_EXECUTION_ID = "job.execution.resumedId";
+
     String JOB_STEP_FROM_INDEX = "job.step.fromIndex";
 
     String ENQUEUE = "job.enqueue";
+
+    String KAPUA_EXECUTION_ID = "job.execution.id";
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2019 Eurotech and/or its affiliates and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -33,6 +33,7 @@ import org.eclipse.kapua.service.job.step.JobStep;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.JAXBException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +56,7 @@ public class JobDefinitionBuildUtils {
         return listeners;
     }
 
-    public static JSLProperties buildJobProperties(KapuaId scopeId, KapuaId jobId, JobStartOptions jobStartOptions) throws JAXBException {
+    public static JSLProperties buildJobProperties(@NotNull KapuaId scopeId, @NotNull KapuaId jobId, @NotNull JobStartOptions jobStartOptions) throws JAXBException {
 
         List<Property> jslPropertyList = new ArrayList<>();
 
@@ -76,6 +77,12 @@ public class JobDefinitionBuildUtils {
         targetSublistProperty.setName(JobContextPropertyNames.JOB_TARGET_SUBLIST);
         targetSublistProperty.setValue(XmlUtil.marshal(new JobTargetSublist(jobStartOptions.getTargetIdSublist())));
         jslPropertyList.add(targetSublistProperty);
+
+        // Resumed job execution
+        Property resumedJobExecutionIdProperty = new Property();
+        resumedJobExecutionIdProperty.setName(JobContextPropertyNames.RESUMED_KAPUA_EXECUTION_ID);
+        resumedJobExecutionIdProperty.setValue("#{jobParameters['" + JobContextPropertyNames.RESUMED_KAPUA_EXECUTION_ID + "']}");
+        jslPropertyList.add(resumedJobExecutionIdProperty);
 
         // Job from step index
         if (jobStartOptions.getFromStepIndex() != null) {
@@ -98,7 +105,7 @@ public class JobDefinitionBuildUtils {
         return jslProperties;
     }
 
-    public static JSLProperties buildStepProperties(JobStepDefinition jobStepDefinition, JobStep jobStep, boolean hasNext) {
+    public static JSLProperties buildStepProperties(@NotNull JobStepDefinition jobStepDefinition, @NotNull JobStep jobStep, boolean hasNext) {
         JSLProperties jslProperties = new JSLProperties();
         List<Property> jslPropertyList = jslProperties.getPropertyList();
 
@@ -119,7 +126,7 @@ public class JobDefinitionBuildUtils {
         return jslProperties;
     }
 
-    public static Collection<Property> buildCustomStepProperties(JobStepDefinition jobStepDefinition, JobStep jobStep) {
+    public static Collection<Property> buildCustomStepProperties(@NotNull JobStepDefinition jobStepDefinition, @NotNull JobStep jobStep) {
 
         Map<String, Property> customStepProperties = new HashMap<>();
 
@@ -146,14 +153,14 @@ public class JobDefinitionBuildUtils {
         return customStepProperties.values();
     }
 
-    public static Batchlet buildGenericStep(JobStepDefinition jobStepDefinition) {
+    public static Batchlet buildGenericStep(@NotNull JobStepDefinition jobStepDefinition) {
         Batchlet batchlet = new Batchlet();
         batchlet.setRef(jobStepDefinition.getProcessorName());
 
         return batchlet;
     }
 
-    public static Chunk buildChunkStep(JobStepDefinition jobStepDefinition) {
+    public static Chunk buildChunkStep(@NotNull JobStepDefinition jobStepDefinition) {
         Chunk chunk = new Chunk();
 
         ItemReader itemReader = new ItemReader();

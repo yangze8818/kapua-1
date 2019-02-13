@@ -78,8 +78,11 @@ public interface JobEngineService extends KapuaService {
      * @param jobId          The id of the {@link org.eclipse.kapua.service.job.Job}
      * @param jobExecutionId The id of the {@link org.eclipse.kapua.service.job.execution.JobExecution} to stop
      * @throws KapuaException if something goes bad when checking the status of the job
+     * @since 1.1.0
      */
     void stopJobExecution(KapuaId scopeId, KapuaId jobId, KapuaId jobExecutionId) throws KapuaException;
+
+    void resumeJobExecution(KapuaId scopeId, KapuaId jobId, KapuaId jobExecutionId) throws KapuaException;
 
     /**
      * Cleans all the Job related data from the data structures supporting the {@link JobEngineService}

@@ -29,8 +29,6 @@ import java.util.Properties;
 
 public class JobContextWrapper {
 
-    private static final String KAPUA_EXECUTION_ID = "KAPUA_EXECUTION_ID";
-
     private JobContext jobContext;
 
     public JobContextWrapper(JobContext jobContext) {
@@ -38,20 +36,17 @@ public class JobContextWrapper {
     }
 
     public KapuaId getScopeId() {
-        Properties jobContextProperties = jobContext.getProperties();
-        String scopeIdString = jobContextProperties.getProperty(JobContextPropertyNames.JOB_SCOPE_ID);
+        String scopeIdString = getProperties().getProperty(JobContextPropertyNames.JOB_SCOPE_ID);
         return scopeIdString != null ? KapuaEid.parseCompactId(scopeIdString) : null;
     }
 
     public KapuaId getJobId() {
-        Properties jobContextProperties = jobContext.getProperties();
-        String jobIdString = jobContextProperties.getProperty(JobContextPropertyNames.JOB_ID);
+        String jobIdString = getProperties().getProperty(JobContextPropertyNames.JOB_ID);
         return jobIdString != null ? KapuaEid.parseCompactId(jobIdString) : null;
     }
 
     public JobTargetSublist getTargetSublist() {
-        Properties jobContextProperties = jobContext.getProperties();
-        String jobTargetSublistString = jobContextProperties.getProperty(JobContextPropertyNames.JOB_TARGET_SUBLIST);
+        String jobTargetSublistString = getProperties().getProperty(JobContextPropertyNames.JOB_TARGET_SUBLIST);
 
         try {
             return XmlUtil.unmarshal(jobTargetSublistString, JobTargetSublist.class);
@@ -60,17 +55,19 @@ public class JobContextWrapper {
         }
     }
 
-    public Integer getFromStepIndex() {
-        Properties jobContextProperties = jobContext.getProperties();
-        String fromStepIndexString = jobContextProperties.getProperty(JobContextPropertyNames.JOB_STEP_FROM_INDEX);
+    public KapuaId getResumedJobExecutionId() {
+        String resumedKapuaExecutionIdString = getProperties().getProperty(JobContextPropertyNames.RESUMED_KAPUA_EXECUTION_ID);
+        return Strings.isNullOrEmpty(resumedKapuaExecutionIdString) ? null : KapuaEid.parseCompactId(resumedKapuaExecutionIdString);
+    }
 
+    public Integer getFromStepIndex() {
+        String fromStepIndexString = getProperties().getProperty(JobContextPropertyNames.JOB_STEP_FROM_INDEX);
         return Strings.isNullOrEmpty(fromStepIndexString) ? null : Integer.valueOf(fromStepIndexString);
     }
 
     public boolean getEnqueue() {
-        Properties jobContextProperties = jobContext.getProperties();
-        String enqueueString = jobContextProperties.getProperty(JobContextPropertyNames.ENQUEUE);
-        return enqueueString != null ? Boolean.valueOf(enqueueString) : false;
+        String enqueueString = getProperties().getProperty(JobContextPropertyNames.ENQUEUE);
+        return enqueueString != null && Boolean.valueOf(enqueueString);
     }
 
     public JobTransientUserData getJobTransientUserData() {
@@ -132,10 +129,10 @@ public class JobContextWrapper {
     }
 
     public KapuaId getKapuaExecutionId() {
-        return (KapuaId) getProperties().get(KAPUA_EXECUTION_ID);
+        return (KapuaId) getProperties().get(JobContextPropertyNames.KAPUA_EXECUTION_ID);
     }
 
     public void setKapuaExecutionId(KapuaId kapuaExecutionId) {
-        getProperties().put(KAPUA_EXECUTION_ID, kapuaExecutionId);
+        getProperties().put(JobContextPropertyNames.KAPUA_EXECUTION_ID, kapuaExecutionId);
     }
 }
